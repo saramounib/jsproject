@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chercher produit</title>
+    <link rel="stylesheet" href="file.css">
+</head>
+<body class="bodyform">
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {//Ici, on attend que tout le contenu de la page HTML soit chargé avant d’exécuter le script
+const products = [
+    { title: "PC Portable" },
+    { title: "Smartphone Galaxy" },
+    { title: "Chaussures Running" }
+];
+
+const submit = document.querySelector(".button");
+const res = document.querySelector(".resultat");
+
+submit.addEventListener("click", function() {
+    const nom = document.querySelector(".nom").value.trim().toLowerCase();//trim() supprime les espaces au début et à la fin (pour éviter " ").
+
+    const found = products.some(p => p.title.toLowerCase() === nom);//some() parcourt le tableau products et renvoie true si au moins un produit correspond au nom saisi.
+
+    if (found) {
+        res.textContent = "Le produit existe ✅";
+        res.style.color = "green";
+    } else {
+        res.textContent = "Le produit n'existe pas ❌";
+        res.style.color = "red";
+    }
+    if(nom == "") {
+        res.textContent = "Veuillez saisir le nom du produit !";
+       res.style.color = "orange";
+    }
+});
+});
+    </script>
+    <form class="form">
+        <label class="titre"><b>Rechercher un produit dans notre site  :</b></label><br><br>
+        Nom:  <input class="nom" type="text"  name="nom" placeholder="ex:pc portable"> <br><br>
+        Type:  <input class="type" type="text" name="type" placeholder="ex:phone"> <br><br>
+        Marque:  <input class="marque" type="text" name="marque" placeholder="ex:samsung"><br><br>
+        Prix:  <input type="number" id="Price"><br><br>
+        catégories:  <select id="category">
+            <option value="">Les catégories</option>
+            <option value="electronique">Électronique</option>
+            <option value="vetements">Vêtements</option>
+            <option value="maison">Maison</option>
+            <option value="livres">Livres</option>
+            <option value="jouets">Jouets</option>
+        </select>
+        <br><br>
+           <input class="button" type="button" name="sub" value="rechercher"><br><br>
+         
+    </form>  <p class="resultat"></p>
+</body>
+</html>

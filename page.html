@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>TechStore Dashboard</title>
+<link rel="stylesheet" href="file.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+
+</head>
+<body>
+
+<header>
+    <h1>TechStore Dashboard</h1>
+</header>
+
+<div class="container">
+    <aside class="sidebar">
+        <ul>
+            <li><a href="chercher.html" target="_blank">chercher</a></li>
+            <li><a href="contact.html" target="_blank">Contact</a></li>
+            <li><a href="statistique.html" target="_blank">A propos</a></li>
+            <li><a href="moncompte.html" target="_blank">Mon compte</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <!-- KPI Cards -->
+        <section class="kpis">
+            <div class="kpi-card">
+                <h3>Total Produits</h3>
+                <p id="total-products"></p>
+            </div>
+            <div class="kpi-card">
+                <h3>Prix Min</h3>
+                <p id="min-price"></p>
+            </div>
+            <div class="kpi-card">
+                <h3>Prix Moyen</h3>
+                <p id="avg-price"></p>
+            </div>
+            <div class="kpi-card">
+                <h3>Prix Max</h3>
+                <p id="max-price"></p>
+            </div>
+        </section>
+
+        <!-- Graphiques -->
+        <section class="charts">
+            <div class="chart-card">
+                <h3>📊 KPI Overview</h3>
+                <canvas id="kpiChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>📊 Visiteurs simulés & Prix</h3>
+                <canvas id="visitorsChart"></canvas>
+            </div>
+         
+        </section>
+
+
+        
+
+        <!-- Tableau des produits -->
+        <section class="table-section">
+            <h3>Liste des Produits TechStore</h3>
+            <table id="products-table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Nom</th>
+                        <th>Prix</th>
+                        <th>Rating</th>
+                        <th>Visiteurs</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+    </main>
+</div>
+
+
+<script src="script.js"></script>
+</body>
+</html>
