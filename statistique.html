@@ -4,12 +4,36 @@
 <meta charset="UTF-8">
 <title>Top Brands</title>
 <link rel="stylesheet" href="file.css">
-
-
-
-
 <h1 class="titrequest">Pourquoi choisir notre tech store ? </h1>
+<style>
+    .couchetr {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(5px);
+  background: rgba(0,0,0,0.3);
+  display: none;
+  z-index: 10;
+}
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  display: none;
+  z-index: 20;
+  border-radius: 12px;
+}
+#closeBtn{
+    cursor:pointer;
+}
 
+
+</style>
 </head>
 
 <body>
@@ -85,26 +109,37 @@
 </section>
 
 <input class="btnFAQ" type="button" value="FAQ">
-<!-- Modal FAQ -->
-<div id="faqModal">
-    <div class="faqContent">
-      <span class="closeFaq">&times;</span>
-      <h2>Frequently Asked Questions</h2>
-      
-      <h3>Comment passer une commande ?</h3>
-      <p>Vous pouvez passer vos commandes via :  
-      Ce site directement (On vous recontacte pour la confirmation).  
-      Appel Téléphonique / WhatsApp au 06 59 84 13 92.  
-      Notre page Instagram.</p>
-  
-      <h3>Quels sont les moyens de paiement acceptés ?</h3>
-      <p>Paiement en espèce.  
-      Paiement par virement bancaire (CIH, Albarid Bank, Attijariwafa bank, BMCE).  
-      Pour les paiements par virement, le montant doit être encaissé avant de pouvoir récupérer le produit.  
-      Un montant d avance peut être exigé pour les commandes hors la région de Rabat.</p>
-    </div>
+
+<div class="couchetr">
+  <div class="popup">
+    <span id="closeBtn">✖</span>
+    <h2>Frequently Asked Questions</h2>
+
+    <h3>Comment passer une commande ?</h3>
+    <p>Vous pouvez passer vos commandes via le site, WhatsApp ou Instagram.</p>
+
+    <h3>Quels sont les moyens de paiement acceptés ?</h3>
+    <p>Paiement en espèce ou par virement bancaire.</p>
   </div>
- 
+</div>
+
+  <script>
+    const btnFAQ = document.querySelector(".btnFAQ");
+    const popup = document.querySelector(".popup");
+    const couchetr = document.querySelector(".couchetr");
+    const closeBtn = document.getElementById("closeBtn");
+  
+    btnFAQ.addEventListener("click", () => {
+      popup.style.display = "block";
+      couchetr.style.display = "block";
+    });
+  
+    closeBtn.addEventListener("click", () => {
+      popup.style.display = "none";
+      couchetr.style.display = "none";
+    });
+  </script>
+  
   
 </body>
 </html>

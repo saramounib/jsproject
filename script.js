@@ -40,23 +40,21 @@ let electronics =[];
     // Générer un nombre aléatoire de visiteurs pour chaque produit (50 à 550) 
     // // Générer le nombre d’acheteurs (toujours ≤ visiteurs)buyers
     const buyers = [];
-
     const visitors = [];
-
-    for (let i = 0; i < electronics.length; i++) {
+    for (let i = 0; i < electronics.length; i++){
         const va = Math.floor(Math.random() * 500) + 50;
         visitors.push(va);
-   
+
         const aa = Math.floor(Math.random() * (va+1));
         buyers.push(aa);
     }
     // 5️⃣ Remplir le tableau HTML avec les produits
 
-    // Sélectionner le <tbody> du tableau
+    
     const tbody = document.querySelector("tbody");
 
 
-    for(let i=0; i< electronics.length ;i++){
+    for(let i=0; i < electronics.length ;i++){
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td><img src="${electronics[i].image}" /></td>
@@ -66,6 +64,7 @@ let electronics =[];
             <td>${visitors[i]}</td>
         `;
         tbody.appendChild(tr);
+        //ajoute la ligne <tr> à la fin du <tbody> du tableau.
     }
 
     // 6️⃣ Graphique KPI (line chart)
