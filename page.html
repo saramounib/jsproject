@@ -5,109 +5,30 @@
 <title>TechStore Dashboard</title>
 <link rel="stylesheet" href="file.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
-<style>
-    /* ============================= */
-/* FORMULAIRE PRODUIT */
-/* ============ boutton enregistrer================= */
-/* Bouton Enregistrer du formulaire */
-.Enregistrer{
-    width: 100%;
-    padding: 12px 0;
-    background: linear-gradient(135deg, #1d72b8, #4aa0f0); /* bleu dégradé */
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-}
-
-/* Effet hover */
-.Enregistrer:hover {
-    background: linear-gradient(135deg, #155a8a, #3a8edc); /* dégradé plus foncé */
-    transform: translateY(-2px); /* léger effet de soulèvement */
-    box-shadow: 0 6px 8px rgba(0,0,0,0.25);
-}
-
-/* Effet click */
-.Enregistrer:active {
-    transform: translateY(1px);
-    box-shadow: 0 3px 5px rgba(0,0,0,0.2);
-}
-/* ============================= fin boutton enregistrer================= */
-.form-section {
-    background-color: #ffffff;
-    padding: 20px;
-    margin: 20px 0;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.form-section h3 {
-    margin-bottom: 15px;
-    color: #333;
-}
-
-/* FORM */
-#product-form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-/* INPUTS */
-#product-form input {
-    width: 48%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 14px;
-}
-
-/* Bouton */
-/* overlay sombre + centrage */
-#faq-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.3); /* semi transparent */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 100; /* au-dessus du reste */
-}
-
-/* FAQ box */
-#faq-box {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    width: 300px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
-}
-
-/* flou appliqué au reste de la page */
-.blur {
-    filter: blur(5px);
-}
-
-/* ================= fin boutton faq============ */
-
-
-</style>
 </head>
 <body>
 
 <header>
     <h1>TechStore Dashboard</h1>
 </header>
+<!-- boutton faq -->
+<button id="faq-btn" >❓ Aide / FAQ</button>
+
+<!-- FAQ modal -->
+<div id="faq-overlay" style="display: none;">
+    <div id="faq-box">
+        <h3>📌 Aide – Utilisation de TechStore</h3>
+        <ul>
+            <li>📦 Les produits sont chargés depuis une API externe.</li>
+            <li>🔍 Utilise la barre de recherche pour filtrer les produits.</li>
+            <li>➕ Le formulaire permet d’ajouter ou modifier un produit.</li>
+            <li>📊 Les KPI affichent des statistiques simples.</li>
+        </ul>
+        <button id="faq-close">Fermer</button>
+    </div>
+</div>
 
 <div class="container">
-   
     <main class="main-content">
         <!-- KPI Cards -->
         <section class="kpis">
@@ -145,14 +66,29 @@
 
 
         <!-- Recherche produit -->
-        <input type="text" id="search" placeholder="Rechercher un produit">
-        <button id="btn-search">Rechercher</button>
 
+       <!-- Bloc recherche produit -->
+<div class="search-block">
+    <input type="text" id="search" placeholder="🔍 Rechercher un produit...">
+    <button id="btn-search">Rechercher</button>
+</div>
+
+<!-- Filtre par catégorie -->
+<div class="search-block">
+    <select id="category-filter">
+        <option value="all">📂 Toutes les catégories</option>
+            <option value="electronics">Electronics</option>
+            <option value="jewelery">Jewelery</option>
+            <option value="men's clothing">Men's clothing</option>
+            <option value="women's clothing">Women's clothing</option>
+    </select>
+</div>
 
 
         <!-- Tableau des produits -->
         <section class="table-section">
             <h3>Liste des Produits TechStore</h3>
+            <button id="add-product-btn">➕ Ajouter un produit</button>
             <table id="products-table">
                 <thead>
                     <tr>
@@ -161,127 +97,52 @@
                         <th>Prix</th>
                         <th>Rating</th>
                         <th>Visiteurs</th>
+                        <th>Catégorie</th>
+                        <th>Actions modification</th>
+                        <th>Actions suppression</th>
+
                     </tr>
                 </thead>
                 <tbody></tbody>
             </table>
         </section>
+
     </main>
-</div>
 
+<!-- Bouton pour ouvrir le formulaire modal -->
 
+<!-- Modal pour ajouter / modifier un produit -->
+<div id="product-modal" style="display: none;">
+    <div id="product-modal-box">
+        <button id="product-close">❌ Fermer</button>
+        <h3>Ajouter / Modifier un produit</h3>
 
-<section class="form-section">
-    <h3>Ajouter / Modifier un produit</h3>
+        <form id="product-form">
+            <input type="hidden" id="product-id">
 
-    <form id="product-form">
-        <input type="hidden" id="product-id">
-
-        <input type="text" id="name" placeholder="Nom du produit" required>
-        <input type="number" id="price" placeholder="Prix" required>
-        <input type="number" id="rating" placeholder="Rating" min="0" max="5" step="0.1" required>
-        <input type="number" id="visitors" placeholder="Visiteurs" required>
-        <input type="text" id="image" placeholder="URL image" required>
-
-        <button class="Enregistrer" type="submit">Enregistrer</button>
-    </form>
-</section>
-<!-- boutton faq -->
- <button id="faq-btn">❓ Aide / FAQ</button>
-
-<!-- FAQ modal -->
-<div id="faq-overlay" style="display: none;">
-    <div id="faq-box">
-        <h3>📌 Aide – Utilisation de TechStore</h3>
-        <ul>
-            <li>📦 Les produits sont chargés depuis une API externe.</li>
-            <li>🔍 Utilise la barre de recherche pour filtrer les produits.</li>
-            <li>➕ Le formulaire permet d’ajouter ou modifier un produit.</li>
-            <li>📊 Les KPI affichent des statistiques simples.</li>
-        </ul>
-        <button id="faq-close">Fermer</button>
+            <input type="text" id="name" placeholder="Nom du produit" required>
+            <input type="number" id="price" placeholder="Prix" required>
+            <input type="number" id="rating" placeholder="Rating" min="0" max="5" step="0.1" required>
+            <input type="number" id="visitors" placeholder="Visiteurs" required>
+            <input type="text" id="image" placeholder="URL image" required>
+            <select id="category" required>
+                <option value="">-- Choisir une catégorie --</option>
+                <option value="electronics">Électronique</option>
+                <option value="jewelery">Bijoux</option>
+                <option value="men's clothing">Vêtements Homme</option>
+                <option value="women's clothing">Vêtements Femme</option>
+            </select>
+            
+            <button class="Enregistrer" type="submit">Enregistrer</button>
+        </form>
     </div>
 </div>
 
-<!-- boutton faq-->
+
+</div>
+
 
 <script src="script.js"></script>
-<script>
-  /**********************************
- * 1. TABLEAU DES PRODUITS
- **********************************/
-let products = [];
 
-/**********************************
- * 2. RÉCUPÉRATION DES PRODUITS (API)
- **********************************/
-fetch("https://fakestoreapi.com/products")
-    .then(function (response) {
-        return response.json();
-    })
-    .then(function (data) {
-        products = data;
-        afficherProduits(products);
-        calculerKPI();
-    })
-    .catch(function () {
-        alert("Erreur lors du chargement des produits");
-    });
-
-/**********************************
- * 3. AFFICHER LES PRODUITS
- **********************************/
-function afficherProduits(list) {
-    let tbody = document.querySelector("#products-table tbody");
-    tbody.innerHTML = "";
-
-    for (let i = 0; i < list.length; i++) {
-        tbody.innerHTML += `
-            <tr>
-                <td><img src="${list[i].image}" width="40"></td>
-                <td>${list[i].title}</td>
-                <td>${list[i].price} $</td>
-                <td>${list[i].rating.rate}</td>
-                <td>-</td>
-            </tr>
-        `;
-    }
-}
-
-/**********************************
- * 4. KPI (STATISTIQUES*/
-function calculerKPI() {
-    document.getElementById("total-products").textContent = products.length;}
-
-    document.getElementById("btn-search").addEventListener("click", function () {
-    let valeur = document.getElementById("search").value.toLowerCase();
-
-    let resultat = products.filter(function (product) {
-        return product.title.toLowerCase().includes(valeur);
-    });
-
-    afficherProduits(resultat);
-});
-// ===================== boutton faq =====================
-const faqBtn = document.getElementById("faq-btn");
-const faqOverlay = document.getElementById("faq-overlay");
-const faqClose = document.getElementById("faq-close");
-const mainContent = document.querySelector("main"); // ou ".container" si tu veux flouter tout
-
-// Ouvrir FAQ
-faqBtn.addEventListener("click", function() {
-    faqOverlay.style.display = "flex";
-    mainContent.classList.add("blur"); // flou
-});
-
-// Fermer FAQ
-faqClose.addEventListener("click", function() {
-    faqOverlay.style.display = "none";
-    mainContent.classList.remove("blur"); // retire le flou
-});
-
-// ===================== fin boutton faq =====================
-
-  </script>
 </body>
 </html>

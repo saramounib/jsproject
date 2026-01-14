@@ -1,11 +1,13 @@
 {
 	"folders": [
 		{
-			"path": "."
+			"path": "../../../../produit_artisanal"
 		},
 		{
-			"path": "../../../../../../xampp/htdocs/res_profil"
+			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "projet"
+	}
 }
