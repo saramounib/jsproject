@@ -192,6 +192,104 @@ img {
     font-size: 14px;
 }
 
+/* Navbar supérieure */
+.top-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background-color: #2c3e50; /* bleu foncé */
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    font-family: Arial, sans-serif;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.top-navbar h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.top-navbar .nav-links a {
+    color: #ecf0f1; /* texte clair */
+    margin-left: 20px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.top-navbar .nav-links a:hover {
+    color: #1abc9c; /* vert clair au hover */
+}
+
+/* Sidebar verticale */
+.sidebar {
+    position: fixed;
+    top: 50px; /* sous la navbar */
+    left: 0;
+    width: 200px;
+    height: 100%;
+    background-color: #34495e; /* bleu gris foncé */
+    padding-top: 20px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+    font-family: Arial, sans-serif;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 10px;
+}
+
+.sidebar ul li a {
+    display: flex;
+    align-items: center;
+    color: #ecf0f1;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: 0.3s;
+    font-weight: bold;
+}
+
+.sidebar ul li a:hover {
+    background-color: #1abc9c; /* vert clair au hover */
+    color: white;
+}
+
+.sidebar ul li a img, .sidebar ul li a span {
+    margin-right: 10px;
+}
+
+/* Décalage du contenu principal pour navbar + sidebar */
+main {
+    margin-left: 220px; /* largeur sidebar + padding */
+    padding-top: 70px; /* hauteur navbar + petit padding */
+    scroll-behavior: smooth;
+}
+
+/* Pour rendre le tout plus propre sur mobile (optionnel) */
+@media screen and (max-width: 768px){
+    .sidebar {
+        width: 150px;
+    }
+    main {
+        margin-left: 160px;
+    }
+    .top-navbar .nav-links a {
+        margin-left: 10px;
+        font-size: 14px;
+    }
+}
 
 
 .btn-edit {

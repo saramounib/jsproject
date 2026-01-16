@@ -14,6 +14,25 @@
 </style>
 </head>
 <body>
+<!-- Navbar supérieure -->
+<nav class="top-navbar">
+    <h2>TechStore Dashboard</h2>
+    <div class="nav-links">
+        <a href="#products-section">Produits</a>
+        <a href="#categories-section">Catégories</a>
+    </div>
+</nav>
+
+<!-- Sidebar verticale -->
+<aside class="sidebar">
+    <ul>
+        <li><a href="#products-section">🛒 Produits</a></li>
+        <li><a href="#categories-section">📂 Catégories</a></li>
+        <li><a href="#kpiChart">📊 KPI</a></li>
+        <li><a href="#visitorsChart">👥 Visiteurs</a></li>
+       
+    </ul>
+</aside>
 
 <header>
     <h1>TechStore Dashboard</h1>
@@ -62,11 +81,13 @@
         <select id="category-filter">
             <option value="all">📂 Toutes les catégories</option>
         </select>
-        <button id="manage-categories-btn">⚙️ Gérer catégories</button>
+        <section id="categories-section">
+            <button id="manage-categories-btn">⚙️ Gérer catégories</button>
+        </section>
     </div>
 
     <!-- Tableau des produits -->
-    <section class="table-section">
+    <section class="table-section"  id="products-section">
         <h3>Liste des Produits TechStore</h3>
         <button id="add-product-btn">➕ Ajouter un produit</button>
         <table id="products-table">
