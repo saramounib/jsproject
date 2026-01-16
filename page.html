@@ -5,18 +5,26 @@
 <title>TechStore Dashboard</title>
 <link rel="stylesheet" href="file.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+<style>
+/* Styles simples pour modals */
+.modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+.modal-content { background: white; padding: 20px; border-radius: 10px; width: 400px; max-width: 90%; }
+.close { cursor: pointer; float: right; font-size: 20px; }
+.blur { filter: blur(5px); }
+</style>
 </head>
 <body>
 
 <header>
     <h1>TechStore Dashboard</h1>
 </header>
-<!-- boutton faq -->
+
+<!-- Bouton FAQ -->
 <button id="faq-btn" >❓ Aide / FAQ</button>
 
 <!-- FAQ modal -->
-<div id="faq-overlay" style="display: none;">
-    <div id="faq-box">
+<div id="faq-overlay" class="modal">
+    <div id="faq-box" class="modal-content">
         <h3>📌 Aide – Utilisation de TechStore</h3>
         <ul>
             <li>📦 Les produits sont chargés depuis une API externe.</li>
@@ -28,121 +36,100 @@
     </div>
 </div>
 
-<div class="container">
-    <main class="main-content">
-        <!-- KPI Cards -->
-        <section class="kpis">
-            <div class="kpi-card">
-                <h3>Total Produits</h3>
-                <p id="total-products"></p>
-            </div>
-            <div class="kpi-card">
-                <h3>Prix Min</h3>
-                <p id="min-price"></p>
-            </div>
-            <div class="kpi-card">
-                <h3>Prix Moyen</h3>
-                <p id="avg-price"></p>
-            </div>
-            <div class="kpi-card">
-                <h3>Prix Max</h3>
-                <p id="max-price"></p>
-            </div>
-        </section>
+<main class="main-content">
+    <!-- KPI Cards -->
+    <section class="kpis">
+        <div class="kpi-card"><h3>Total Produits</h3><p id="total-products"></p></div>
+        <div class="kpi-card"><h3>Prix Min</h3><p id="min-price"></p></div>
+        <div class="kpi-card"><h3>Prix Moyen</h3><p id="avg-price"></p></div>
+        <div class="kpi-card"><h3>Prix Max</h3><p id="max-price"></p></div>
+    </section>
 
-        <!-- Graphiques -->
-        <section class="charts">
-            <div class="chart-card">
-                <h3>📊 KPI Overview</h3>
-                <canvas id="kpiChart"></canvas>
-            </div>
-            <div class="chart-card">
-                <h3>📊 Visiteurs simulés & Prix</h3>
-                <canvas id="visitorsChart"></canvas>
-            </div>
-         
-        </section>
+    <!-- Graphiques -->
+    <section class="charts">
+        <div class="chart-card"><h3>📊 KPI Overview</h3><canvas id="kpiChart"></canvas></div>
+        <div class="chart-card"><h3>📊 Visiteurs simulés & Prix</h3><canvas id="visitorsChart"></canvas></div>
+    </section>
 
+    <!-- Recherche produit -->
+    <div class="search-block">
+        <input type="text" id="search" placeholder="🔍 Rechercher un produit...">
+        <button id="btn-search">Rechercher</button>
+    </div>
 
+    <!-- Filtre par catégorie -->
+    <div class="search-block">
+        <select id="category-filter">
+            <option value="all">📂 Toutes les catégories</option>
+        </select>
+        <button id="manage-categories-btn">⚙️ Gérer catégories</button>
+    </div>
 
-        <!-- Recherche produit -->
+    <!-- Tableau des produits -->
+    <section class="table-section">
+        <h3>Liste des Produits TechStore</h3>
+        <button id="add-product-btn">➕ Ajouter un produit</button>
+        <table id="products-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Nom</th>
+                    <th>Prix</th>
+                    <th>Rating</th>
+                    <th>Visiteurs</th>
+                    <th>Catégorie</th>
+                    <th>Modifier</th>
+                    <th>Supprimer</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
+</main>
 
-       <!-- Bloc recherche produit -->
-<div class="search-block">
-    <input type="text" id="search" placeholder="🔍 Rechercher un produit...">
-    <button id="btn-search">Rechercher</button>
-</div>
-
-<!-- Filtre par catégorie -->
-<div class="search-block">
-    <select id="category-filter">
-        <option value="all">📂 Toutes les catégories</option>
-            <option value="electronics">Electronics</option>
-            <option value="jewelery">Jewelery</option>
-            <option value="men's clothing">Men's clothing</option>
-            <option value="women's clothing">Women's clothing</option>
-    </select>
-</div>
-
-
-        <!-- Tableau des produits -->
-        <section class="table-section">
-            <h3>Liste des Produits TechStore</h3>
-            <button id="add-product-btn">➕ Ajouter un produit</button>
-            <table id="products-table">
-                <thead>
-                    <tr>
-                        <th>Image</th>
-                        <th>Nom</th>
-                        <th>Prix</th>
-                        <th>Rating</th>
-                        <th>Visiteurs</th>
-                        <th>Catégorie</th>
-                        <th>Actions modification</th>
-                        <th>Actions suppression</th>
-
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </section>
-
-    </main>
-
-<!-- Bouton pour ouvrir le formulaire modal -->
-
-<!-- Modal pour ajouter / modifier un produit -->
-<div id="product-modal" style="display: none;">
-    <div id="product-modal-box">
-        <button id="product-close">❌ Fermer</button>
-        <h3>Ajouter / Modifier un produit</h3>
-
+<!-- MODAL AJOUT PRODUIT -->
+<div id="product-modal" class="modal">
+    <div class="modal-content">
+        <span id="product-close" class="close">&times;</span>
+        <h3>Ajouter un produit</h3>
         <form id="product-form">
-            <input type="hidden" id="product-id">
-
             <input type="text" id="name" placeholder="Nom du produit" required>
             <input type="number" id="price" placeholder="Prix" required>
             <input type="number" id="rating" placeholder="Rating" min="0" max="5" step="0.1" required>
             <input type="number" id="visitors" placeholder="Visiteurs" required>
             <input type="text" id="image" placeholder="URL image" required>
-            <select id="category" required>
-                <option value="">-- Choisir une catégorie --</option>
-                <option value="electronics">Électronique</option>
-                <option value="jewelery">Bijoux</option>
-                <option value="men's clothing">Vêtements Homme</option>
-                <option value="women's clothing">Vêtements Femme</option>
-            </select>
-            
-            <button class="Enregistrer" type="submit">Enregistrer</button>
+            <select id="category" required></select>
+            <button type="submit">Enregistrer</button>
         </form>
     </div>
 </div>
 
-
+<!-- MODAL MODIFICATION PRODUIT -->
+<div id="edit-modal" class="modal">
+    <div class="modal-content">
+        <span id="edit-close" class="close">&times;</span>
+        <h3>Modifier le produit</h3>
+        <form id="edit-form">
+            nom:<input type="text" id="edit-title" required>
+            prix:<input type="number" id="edit-price" step="0.01" required>
+            image:<input type="text" id="edit-image" required>
+            categorie<select id="edit-category" required></select>
+            <button type="button" id="save-edit">Enregistrer</button>
+        </form>
+    </div>
 </div>
 
+<!-- MODAL CRUD CATÉGORIES -->
+<div id="category-modal" class="modal">
+    <div class="modal-content">
+        <span id="category-close" class="close">&times;</span>
+        <h3>Gérer les catégories</h3>
+        <input type="text" id="new-category" placeholder="Nouvelle catégorie">
+        <button id="add-category-btn">Ajouter categorie</button>
+        <ul id="category-list"></ul>
+    </div>
+</div>
 
 <script src="script.js"></script>
-
 </body>
 </html>

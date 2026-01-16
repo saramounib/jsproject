@@ -1,250 +1,92 @@
-// Initialisation du tableau produits
-let products = [];
+let products = JSON.parse(localStorage.getItem("products")) || [];
 
-/**********************************
- * RÉCUPÉRATION DES PRODUITS (API)
- **********************************/
-fetch("https://fakestoreapi.com/products")
-    .then(response => response.json()) // Récupère les données JSON depuis l'API
-    .then(myproducts => {
+let categories = JSON.parse(localStorage.getItem("categories")) || [
+    "electronics","jewelery","men's clothing","women's clothing"
+];
 
-        // Stocker les produits récupérés
-        products = myproducts;
-    
-        
-        // Calcul des KPI
-        const totalProducts = products.length; // Nombre total de produits
-        const prices = products.map(p => p.price); // Tableau des prix
-        const minPrice = Math.min(...prices); // Prix minimum
-        const maxPrice = Math.max(...prices); // Prix maximum
-
-        // Calcul du prix moyen
-        let somme = 0;
-        for (let i = 0; i < prices.length; i++) {
-            somme += prices[i]; // Somme de tous les prix
-        }
-        const avgPrice = (somme / prices.length).toFixed(2); // Prix moyen avec 2 décimales
-
-        // Affichage des KPI dans le HTML
-        document.getElementById("total-products").textContent = totalProducts;
-        document.getElementById("min-price").textContent = minPrice + " $";
-        document.getElementById("avg-price").textContent = avgPrice + " $";
-        document.getElementById("max-price").textContent = maxPrice + " $";
-
-        /**********************************
-         * VISITEURS & ACHETEURS
-         **********************************/
-        const visitors = []; // Tableau des visiteurs simulés
-        const buyers = [];   // Tableau des acheteurs simulés
-
-        for (let i = 0; i < products.length; i++) {
-            const va = Math.floor(Math.random() * 500) + 50; // visiteurs aléatoires entre 50 et 550
-            visitors.push(va);
-
-            const aa = Math.floor(Math.random() * (va + 1)); // acheteurs <= visiteurs
-            buyers.push(aa);
-        }
-
-        /**********************************
-         * TABLEAU DES PRODUITS
-         **********************************/
-        const tbody = document.querySelector("#products-table tbody");
-        tbody.innerHTML = ""; // On vide le tableau avant de le remplir
-
-        for (let i = 0; i < products.length; i++) {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-                <td><img src="${products[i].image}" width="40"></td>
-                <td>${products[i].title}</td>
-                <td>${products[i].price} $</td>
-                <td>${products[i].rating.rate} / ${products[i].rating.count}</td>
-                <td>${visitors[i]}</td>
-                <td>${products[i].category}</td>
-
-                <td>
-                    <button class="action-btn btn-edit">✏️ Modifier </button>  </td>
-                <td>
-                    <button class="action-btn btn-delete">🗑️ Supprimer </button>
-                </td>
-            `;
-
-            // Bouton supprimer avec confirmation
-            const deleteBtn = tr.querySelector(".btn-delete");//supprime ds le tableau HTML ligne precise
-            deleteBtn.addEventListener("click", function () {
-                const confirmed = confirm("⚠️ Êtes-vous sûr de vouloir supprimer ce produit ?");
-                if (confirmed) {
-                    tr.remove(); // Supprime la ligne du tableau
-                    // Optionnel : supprimer du tableau JS
-                }
-            });
-
-            // Bouton modifier
-            const editBtn = tr.querySelector(".btn-edit");
-            editBtn.addEventListener("click", function () {
-                const newPrice = prompt("Nouveau prix :", products[i].price); // Demande nouveau prix
-                if (newPrice !== null) {
-                    products[i].price = newPrice; // Mise à jour du tableau JS
-                    tr.children[2].textContent = newPrice + " $"; // 📌 children[2] = 3ᵉ colonne (Prix)
-                }
-            });
-
-            // Ajouter la ligne au tableau HTML
-            tbody.appendChild(tr);
-        }
-
-        /**********************************
-         * GRAPHIQUE KPI
-         **********************************/
-        new Chart(document.getElementById("kpiChart"), {
-            type: "line",
-            data: {
-                labels: ["Total Produits", "Prix Min", "Prix Moyen", "Prix Max"],
-                datasets: [{
-                    label: "Valeur",
-                    data: [totalProducts, minPrice, avgPrice, maxPrice],
-                    backgroundColor: [
-                        "#3c8dbc",
-                        "#f39c12",
-                        "#00a65a",
-                        "#d81b60"
-                    ],
-                    fill: false,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true // Le graphique est flexible selon la taille de l'écran
-            }
-        });
-
-        /**********************************
-         * GRAPHIQUE VISITEURS / ACHETEURS
-         **********************************/
-        new Chart(document.getElementById("visitorsChart"), {
-            type: "bar",
-            data: {
-                labels: products.map(p =>
-                    p.title.length > 15 ? p.title.slice(0, 15) + "..." : p.title
-                ),
-                datasets: [
-                    {
-                        label: "Visiteurs",
-                        data: visitors,
-                        backgroundColor: "#3c8dbc"
-                    },
-                    {
-                        label: "Acheteurs",
-                        data: buyers,
-                        backgroundColor: "#00a65a"
-                    }
-                ]
-            },
-            options: {
-                responsive: true
-            }
-        });
+// --- Chargement API seulement si localStorage vide ---
+if(products.length === 0){
+    fetch("https://fakestoreapi.com/products")
+    .then(r => r.json())
+    .then(data => {
+        products = data;
+        localStorage.setItem("products", JSON.stringify(products)); // sauvegarde initiale
+        initDashboard();
+        renderCategoriesSelect();
     })
-    .catch(error => console.error(error)); // Gestion des erreurs API
+    .catch(err => console.error(err));
+} else {
+    // Si produits dans localStorage, on les affiche directement
+    initDashboard();
+    renderCategoriesSelect();
+}
+
 
 /**********************************
- * RECHERCHE PRODUITS
+ * INIT DASHBOARD
  **********************************/
-document.getElementById("btn-search").addEventListener("click", function () {
-    const valeur = document.getElementById("search").value.toLowerCase(); // Récupère la valeur saisie
-    const resultat = products.filter(product => product.title.toLowerCase().includes(valeur)); // Filtre les produits
+function initDashboard() {
+    const totalProducts = products.length;
+    const prices = products.map(p => p.price);
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+    const avgPrice = (prices.reduce((a,b)=>a+b,0)/prices.length).toFixed(2);
 
+    document.getElementById("total-products").textContent = totalProducts;
+    document.getElementById("min-price").textContent = minPrice+" $";
+    document.getElementById("avg-price").textContent = avgPrice+" $";
+    document.getElementById("max-price").textContent = maxPrice+" $";
+
+    const visitors = products.map(()=>Math.floor(Math.random()*500)+50);
+    const buyers = visitors.map(v=>Math.floor(Math.random()*(v+1)));
+
+    // Tableau produits
     const tbody = document.querySelector("#products-table tbody");
-    tbody.innerHTML = ""; // Vide le tableau
-
-    // Affichage des résultats
-    for (let i = 0; i < resultat.length; i++) {
-        tbody.innerHTML += `
-            <tr>
-                <td><img src="${resultat[i].image}" width="40"></td>
-                <td>${resultat[i].title}</td>
-                <td>${resultat[i].price} $</td>
-                <td>${resultat[i].rating.rate}</td>
-                <td>-</td>
-            </tr>
+    tbody.innerHTML = "";
+    products.forEach((p,i)=>{
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td><img src="${p.image}" width="40"></td>
+            <td>${p.title}</td>
+            <td>${p.price} $</td>
+            <td>${p.rating.rate} / ${p.rating.count}</td>
+            <td>${visitors[i]}</td>
+            <td>${p.category}</td>
+            <td><button class="btn-edit">✏️</button></td>
+            <td><button class="btn-delete">🗑️</button></td>
         `;
-    }
-});
+        tbody.appendChild(tr);
 
-/**********************************
- * BOUTON FAQ
- **********************************/
-const faqBtn = document.getElementById("faq-btn");
-const faqOverlay = document.getElementById("faq-overlay");
-const faqClose = document.getElementById("faq-close");
-const mainContent = document.querySelector("main");
+        // Supprimer
+        tr.querySelector(".btn-delete").addEventListener("click",()=>{ 
+            if(confirm("Supprimer ce produit ?")){
+                products.splice(i,1);
+                localStorage.setItem("products", JSON.stringify(products));
 
-faqBtn.addEventListener("click", function () {
-    faqOverlay.style.display = "flex"; // Affiche le modal FAQ
-    mainContent.classList.add("blur");  // Floute le contenu derrière
-});
+                initDashboard();
+            }
+        });
 
-faqClose.addEventListener("click", function () {
-    faqOverlay.style.display = "none"; // Ferme le modal FAQ
-    mainContent.classList.remove("blur"); // Supprime le flou
-});
+        // Modifier
+        tr.querySelector(".btn-edit").addEventListener("click",()=>openEditModal(p));
+    });
 
-/**********************************
- * FORMULAIRE AJOUT / MODIFICATION PRODUIT
- **********************************/
-const productForm = document.getElementById("product-form");
-
-productForm.addEventListener("submit", function(event) {
-    event.preventDefault(); // Empêche le rechargement de la page pour ne pas perdre les données
-
-    // Récupération des valeurs du formulaire
-    const title = document.getElementById("name").value.trim();//trim() :supprime les espaces inutiles
-    const price = parseFloat(document.getElementById("price").value);
-    const ratingValue = parseFloat(document.getElementById("rating").value);
-    const visitors = parseInt(document.getElementById("visitors").value);
-    const imageUrl = document.getElementById("image").value.trim();
-    const category = document.getElementById("category").value;
-
-    // Création de l'objet produit
-    const newProduct = {
-        title: title,
-        price: price,
-        rating: {
-            rate: ratingValue,
-            count: 0//nombre d’avis (initialisé à 0)
-        },
-        image: imageUrl,
-        category: category
-
-    };
-
-    // Ajout au tableau JS
-    products.push(newProduct);
-
-    // Création d'une nouvelle ligne HTML
-    const tbody = document.querySelector("#products-table tbody");
-    const tr = document.createElement("tr");
-
-    tr.innerHTML = `
-        <td><img src="${imageUrl}" width="40" alt="image produit"></td>
-        <td>${title}</td>
-        <td>${price.toFixed(2)} $</td>
-        <td>${ratingValue} / ${newProduct.rating.count}</td>
-        <td>${visitors}</td>
-        <td>${category}</td>
-
-        <td>
-           <button class="action-btn btn-edit">✏️ Modifier</button> </td>
-           <td>
-           <button class="action-btn btn-delete">🗑️ Supprimer</button>
-        </td>
-    `;
-
-    // Ajouter la ligne au tableau
-    tbody.appendChild(tr);
-
-    // Réinitialiser le formulaire
-    productForm.reset();//Vide le formulaire après l’ajout « On utilise reset pour vider le formulaire après l’ajout afin d’éviter de réutiliser les anciennes valeurs.
-});
+    // Graphiques
+    new Chart(document.getElementById("kpiChart"),{
+        type:"line",
+        data:{
+            labels:["Total","Min","Moyen","Max"],
+            datasets:[{label:"Valeur",data:[totalProducts,minPrice,avgPrice,maxPrice],fill:false,tension:0.4}]
+        }
+    });
+    new Chart(document.getElementById("visitorsChart"),{
+        type:"bar",
+        data:{labels:products.map(p=>p.title.slice(0,15)),datasets:[
+            {label:"Visiteurs",data:visitors,backgroundColor:"#3c8dbc"},
+            {label:"Acheteurs",data:buyers,backgroundColor:"#00a65a"}
+        ]}
+    });
+}
 
 /**********************************
  * MODAL AJOUT PRODUIT
@@ -252,39 +94,157 @@ productForm.addEventListener("submit", function(event) {
 const addProductBtn = document.getElementById("add-product-btn");
 const productModal = document.getElementById("product-modal");
 const productClose = document.getElementById("product-close");
+const mainContent = document.querySelector("main");
+const productForm = document.getElementById("product-form");
 
-// Ouvrir le modal
-addProductBtn.addEventListener("click", function() {
-    productModal.style.display = "flex";
+addProductBtn.addEventListener("click",()=>{
+    productModal.style.display="flex";
     mainContent.classList.add("blur");
 });
 
-// Fermer le modal
-productClose.addEventListener("click", function() {
-    productModal.style.display = "none";
+productClose.addEventListener("click",()=>{
+    productModal.style.display="none";
     mainContent.classList.remove("blur");
 });
 
-document.getElementById("category-filter").addEventListener("change", function () {
-    const selected = this.value;
-    const tbody = document.querySelector("#products-table tbody");
-    tbody.innerHTML = "";
+// Ajouter produit
+productForm.addEventListener("submit",(e)=>{
+    e.preventDefault();
+    const newP = {
+        title:document.getElementById("name").value,
+        price:parseFloat(document.getElementById("price").value),
+        rating:{rate:parseFloat(document.getElementById("rating").value),count:0},
+        image:document.getElementById("image").value,
+        category:document.getElementById("category").value
+    };
+    products.push(newP);
+    localStorage.setItem("products", JSON.stringify(products));
+    productForm.reset();
+    productModal.style.display="none";
+    mainContent.classList.remove("blur");
+    initDashboard();
+});
 
-    const filtered =
-        selected === "all"
-            ? products
-            : products.filter(p => p.category === selected);
+/**********************************
+ * MODAL MODIFICATION PRODUIT
+ **********************************/
+let currentProduct = null;
+const editModal = document.getElementById("edit-modal");
+const editClose = document.getElementById("edit-close");
 
-    filtered.forEach(p => {//forEach parcourt directement chaque élément de ton tableau, tandis que for utilise un index i pour accéder à chaque élément.
-        tbody.innerHTML += `
-            <tr>
-                <td><img src="${p.image}" width="40"></td>
-                <td>${p.title}</td>
-                <td>${p.price} $</td>
-                <td>${p.rating.rate}</td>
-                <td>-</td>
-                <td>${p.category}</td>
-            </tr>
-        `;
+function openEditModal(p){
+    currentProduct = p;
+    editModal.style.display="flex";
+    mainContent.classList.add("blur");
+    document.getElementById("edit-title").value=p.title;
+    document.getElementById("edit-price").value=p.price;
+    document.getElementById("edit-image").value=p.image;
+
+    const sel = document.getElementById("edit-category");
+    sel.innerHTML="";
+    categories.forEach(c=>{
+        const opt = document.createElement("option");
+        opt.value=c; opt.textContent=c;
+        if(c===p.category) opt.selected=true;
+        sel.appendChild(opt);
     });
+}
+
+editClose.addEventListener("click",()=>{
+    editModal.style.display="none";
+    mainContent.classList.remove("blur");
+});
+
+document.getElementById("save-edit").addEventListener("click",()=>{
+    currentProduct.title=document.getElementById("edit-title").value;
+    currentProduct.price=parseFloat(document.getElementById("edit-price").value);
+    currentProduct.image=document.getElementById("edit-image").value;
+    currentProduct.category=document.getElementById("edit-category").value;
+    localStorage.setItem("products", JSON.stringify(products));
+    editModal.style.display="none";
+    mainContent.classList.remove("blur");
+    initDashboard();
+});
+
+/**********************************
+ * MODAL CRUD CATEGORIES
+ **********************************/
+const catModal = document.getElementById("category-modal");
+document.getElementById("category-close").addEventListener("click",()=>{
+    catModal.style.display="none";
+    mainContent.classList.remove("blur");
+});
+
+document.getElementById("manage-categories-btn").addEventListener("click",()=>{
+    catModal.style.display="flex";
+    mainContent.classList.add("blur");
+});
+
+function renderCategoriesSelect(){
+    const sel1 = document.getElementById("category");
+    const sel2 = document.getElementById("category-filter");
+    sel1.innerHTML="<option value=''>-- Choisir catégorie --</option>";
+    sel2.innerHTML="<option value='all'>📂 Toutes les catégories</option>";
+    categories.forEach(c=>{
+        sel1.innerHTML+=`<option value="${c}">${c}</option>`;
+        sel2.innerHTML+=`<option value="${c}">${c}</option>`;
+    });
+}
+
+function renderCategoriesList(){
+    const ul = document.getElementById("category-list");
+    ul.innerHTML="";
+    categories.forEach((c,i)=>{
+        const li = document.createElement("li");
+        li.innerHTML=`${c} <button class="btn-edit">✏️</button> <button class="btn-delete">🗑️</button>`;
+        ul.appendChild(li);
+        li.querySelector(".btn-delete").addEventListener("click",()=>{
+            categories.splice(i,1);
+            localStorage.setItem("categories",JSON.stringify(categories));
+            renderCategoriesList();
+            renderCategoriesSelect();
+        });
+        li.querySelector(".btn-edit").addEventListener("click",()=>{
+            const newName = prompt("Modifier la catégorie:",c);
+            if(newName){
+                categories[i]=newName;
+                localStorage.setItem("categories",JSON.stringify(categories));
+                renderCategoriesList();
+                renderCategoriesSelect();
+            }
+        });
+    });
+}
+renderCategoriesList();
+
+document.getElementById("add-category-btn").addEventListener("click",()=>{
+    const val = document.getElementById("new-category").value.trim();
+    if(val){categories.push(val); document.getElementById("new-category").value=""; renderCategoriesList(); renderCategoriesSelect();}
+});
+
+/**********************************
+ * RECHERCHE PRODUITS
+ **********************************/
+document.getElementById("btn-search").addEventListener("click",()=>{
+    const val = document.getElementById("search").value.toLowerCase();
+    const tbody = document.querySelector("#products-table tbody");
+    tbody.innerHTML="";
+    products.filter(p=>p.title.toLowerCase().includes(val)).forEach(p=>{
+        const tr = document.createElement("tr");
+        tr.innerHTML=`<td><img src="${p.image}" width="40"></td><td>${p.title}</td><td>${p.price} $</td><td>${p.rating.rate}</td><td>-</td><td>${p.category}</td>`;
+        tbody.appendChild(tr);
+    });
+});
+
+/**********************************
+ * FAQ modal
+ **********************************/
+const faqBtn = document.getElementById("faq-btn");
+const faqOverlay = document.getElementById("faq-overlay");
+const faqClose = document.getElementById("faq-close");
+faqBtn.addEventListener("click",()=>{
+    faqOverlay.style.display="flex";
+     mainContent.classList.add("blur");});
+faqClose.addEventListener("click",()=>{faqOverlay.style.display="none"; 
+    mainContent.classList.remove("blur");
 });
