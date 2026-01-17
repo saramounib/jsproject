@@ -248,3 +248,89 @@ faqBtn.addEventListener("click",()=>{
 faqClose.addEventListener("click",()=>{faqOverlay.style.display="none"; 
     mainContent.classList.remove("blur");
 });
+
+const sortSelect = document.getElementById("sort");
+sortSelect.addEventListener("change", () => {
+    let sortedProducts = [...products]; // copie du tableau pour ne pas modifier l'original
+    switch(sortSelect.value){
+        case "alphabetical":
+            sortedProducts.sort((a,b) => a.title.localeCompare(b.title));
+            break;
+        case "price-asc":
+            sortedProducts.sort((a,b) => a.price - b.price);
+            break;
+        case "price-desc":
+            sortedProducts.sort((a,b) => b.price - a.price);
+            break;
+        default:
+            sortedProducts = [...products];
+    }
+    renderProductTable(sortedProducts);
+});
+
+// Nouvelle fonction pour afficher le tableau (à remplacer dans initDashboard)
+function renderProductTable(array) {
+    const tbody = document.querySelector("#products-table tbody");
+    tbody.innerHTML = "";
+    array.forEach((p,i)=>{
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td><img src="${p.image}" width="40"></td>
+            <td>${p.title}</td>
+            <td>${p.price} $</td>
+            <td>${p.rating.rate} / ${p.rating.count}</td>
+            <td>-</td>
+            <td>${p.category}</td>
+            <td><button class="btn-edit">✏️</button></td>
+            <td><button class="btn-delete">🗑️</button></td>
+        `;
+        tbody.appendChild(tr);
+
+        // Supprimer
+        tr.querySelector(".btn-delete").addEventListener("click",()=>{ 
+            if(confirm("Supprimer ce produit ?")){
+                const index = products.findIndex(prod => prod.title === p.title && prod.price === p.price);
+                products.splice(index,1);
+                localStorage.setItem("products", JSON.stringify(products));
+                renderProductTable(products);
+            }
+        });
+
+        // Modifier
+        tr.querySelector(".btn-edit").addEventListener("click",()=>openEditModal(p));
+
+        // Fiche détaillée clic sur nom
+        tr.querySelector("td:nth-child(2)").addEventListener("click", ()=>openDetailModal(p));
+    });
+}
+const detailModal = document.getElementById("detail-modal");
+const detailClose = document.getElementById("detail-close");
+
+function openDetailModal(p){
+    detailModal.style.display="flex";
+    mainContent.classList.add("blur");
+    document.getElementById("detail-title").textContent = p.title;
+    document.getElementById("detail-image").src = p.image;
+    document.getElementById("detail-price").textContent = p.price;
+    document.getElementById("detail-rating").textContent = p.rating.rate;
+    document.getElementById("detail-category").textContent = p.category;
+    // si tu veux afficher visiteurs, génère aléatoire comme dashboard
+    document.getElementById("detail-visitors").textContent = Math.floor(Math.random()*500)+50;
+}
+
+detailClose.addEventListener("click", ()=>{
+    detailModal.style.display="none";
+    mainContent.classList.remove("blur");
+});
+/**********************************
+ * FILTRAGE PAR CATÉGORIE
+ **********************************/
+const categoryFilter = document.getElementById("category-filter");
+
+categoryFilter.addEventListener("change", function () {
+    renderProductTable(
+        this.value === "all"
+            ? products
+            : products.filter(p => p.category === this.value)
+    );
+});

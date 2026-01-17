@@ -75,7 +75,15 @@
         <input type="text" id="search" placeholder="🔍 Rechercher un produit...">
         <button id="btn-search">Rechercher</button>
     </div>
-
+    <div class="search-block">
+        <label for="sort">Trier par :</label>
+        <select id="sort">
+            <option value="default">Par défaut</option>
+            <option value="alphabetical">Nom (A → Z)</option>
+            <option value="price-asc">Prix croissant</option>
+            <option value="price-desc">Prix décroissant</option>
+        </select>
+    </div>
     <!-- Filtre par catégorie -->
     <div class="search-block">
         <select id="category-filter">
@@ -148,6 +156,19 @@
         <input type="text" id="new-category" placeholder="Nouvelle catégorie">
         <button id="add-category-btn">Ajouter categorie</button>
         <ul id="category-list"></ul>
+    </div>
+</div>
+
+<!-- MODAL DETAIL PRODUIT -->
+<div id="detail-modal" class="modal">
+    <div class="modal-content">
+        <span id="detail-close" class="close">&times;</span>
+        <h3 id="detail-title"></h3>
+        <img id="detail-image" src="" width="100">
+        <p>Prix : <span id="detail-price"></span> $</p>
+        <p>Rating : <span id="detail-rating"></span></p>
+        <p>Catégorie : <span id="detail-category"></span></p>
+        <p>Visiteurs : <span id="detail-visitors"></span></p>
     </div>
 </div>
 

@@ -835,3 +835,147 @@ table tr:nth-child(even) {
     padding: 3px 6px;
     font-size: 0.8rem;
 }
+/* =====================
+   Modal fiche produit
+   ===================== */
+   #detail-modal {
+    display: none; /* caché par défaut */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#detail-modal .modal-content {
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    width: 400px;
+    max-width: 90%;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+
+#detail-modal .close {
+    float: right;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#detail-modal img {
+    margin: 15px 0;
+    border-radius: 8px;
+    max-width: 100%;
+}
+
+/* =====================
+   Select tri produits
+   ===================== */
+.search-block select#sort {
+    padding: 5px 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-left: 10px;
+}
+
+/* =====================
+   Tableau hover + pointer
+   ===================== */
+#products-table tbody tr {
+    cursor: pointer; /* permet de cliquer sur le nom pour voir détails */
+    transition: background 0.2s;
+}
+
+#products-table tbody tr:hover {
+    background-color: #f0f0f0;
+}
+
+/* =====================
+   Style blur
+   ===================== */
+.blur {
+    filter: blur(5px);
+    transition: filter 0.2s;
+}
+
+/* =====================
+   Fiche produit responsive
+   ===================== */
+@media (max-width: 500px){
+    #detail-modal .modal-content {
+        width: 90%;
+        padding: 15px;
+    }
+    #products-table tbody td img {
+        width: 30px;
+    }
+}
+/* Conteneur du tri centré */
+.search-block {
+    display: flex;
+    justify-content: center; /* centre horizontalement */
+    align-items: center;     /* centre verticalement si besoin */
+    margin: 15px 0;          /* espace vertical */
+}
+
+/* Label et select alignés */
+.search-block label {
+    margin-right: 10px;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.search-block select#sort {
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+/* Conteneur du tri centré horizontalement dans main */
+.search-block {
+    display: flex;
+    justify-content: center; /* centre horizontalement */
+    align-items: center;     /* centre verticalement */
+    margin: 20px 0;
+    width: 100%;             /* prend toute la largeur de main */
+    box-sizing: border-box;  /* inclut padding si besoin */
+}
+
+/* Label et select */
+.search-block label {
+    margin-right: 10px;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.search-block select#sort {
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    min-width: 200px;       /* taille minimum */
+    max-width: 400px;       /* taille max pour éviter débordement */
+    width: 50%;             /* occupe 50% du conteneur */
+}
+.main-content {
+    margin-left: 220px; /* largeur de la sidebar */
+    padding: 20px;
+}
+.main-content {
+    margin-left: 220px; /* largeur de la sidebar */
+    padding: 20px;
+}
+.search-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 20px 0;
+}
