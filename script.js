@@ -52,10 +52,16 @@ function initDashboard() {
             <td>${p.rating.rate} / ${p.rating.count}</td>
             <td>${visitors[i]}</td>
             <td>${p.category}</td>
-            <td><button class="btn-edit">✏️</button></td>
-            <td><button class="btn-delete">🗑️</button></td>
+            <td><button class="btn-view">👁️ Voir</button></td>
+            <td><button class="btn-edit">✏️ Modifier</button></td>
+            <td><button class="btn-delete">🗑️ Supprimer</button></td>
         `;
         tbody.appendChild(tr);
+        // Voir détails
+tr.querySelector(".btn-view").addEventListener("click", () => {
+    openDetailModal(p);
+});
+
 
         // Supprimer
         tr.querySelector(".btn-delete").addEventListener("click",()=>{ 
@@ -123,6 +129,8 @@ productForm.addEventListener("submit",(e)=>{
     productModal.style.display="none";
     mainContent.classList.remove("blur");
     initDashboard();
+    renderProductTable(products);
+
 });
 
 /**********************************

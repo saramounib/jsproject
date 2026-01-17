@@ -979,3 +979,14 @@ table tr:nth-child(even) {
     width: 100%;
     margin: 20px 0;
 }
+.btn-view{
+    background:#3498db;
+    color:white;
+    border:none;
+    padding:4px 8px;
+    border-radius:6px;
+    cursor:pointer;
+}
+.btn-view:hover{
+    background:#217dbb;
+}
